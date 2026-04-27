@@ -1,14 +1,20 @@
-# google-dataset-conversion-funnel-analysis
-│
-├── README.md
-├── /sql/
-│   ├── 01_data_exploration.sql
-│   ├── 02_conversion_definition.sql
-│   ├── 03_funnel_analysis.sql
-│   ├── 04_product_analysis.sql
-│   ├── 05_engagement_analysis.sql
-│   ├── 06_repeat_behavior.sql
-│   └── 07_funnel_deep_dive.sql
-│
-├── /docs/
-│   └── insights_summary.md
+Conversion funnel & user behaviour analysis using BigQuery
+==========================================================
+1. Dataset source
+
+This project uses the Google Analytics Sample dataset in BigQuery public datasets:
+
+https://console.cloud.google.com/marketplace/product/obfuscated-ga360-data/obfuscated-ga360-data
+
+2. Tables used:
+
+bigquery-public-data.google_analytics_sample.ga_sessions_*
+
+There is no setup required. It is publicly available inside BigQuery.
+
+3. Project goal
+
+Identification of:
+3.1. Where users drop-off in the funnel
+3.2. How converters differ from non-converters
+3.3. Which behaviours and product categories drive conversion
