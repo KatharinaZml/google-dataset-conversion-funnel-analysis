@@ -1,0 +1,167 @@
+/* =========================================================
+STEP 0 — Anchor yourself (what data do I actually have?)
+========================================================= */
+
+-- Q0.1: What revenue granularity exists?
+-- (session-level, user-level, order-level)
+
+-- Write query here:
+
+
+-- Q0.2: Can I connect funnel steps to users/sessions?
+-- (Check presence of user_id, session_id, step/event mapping)
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 1 — Is value even distributed?
+========================================================= */
+
+-- Q1.1: Total revenue per user
+
+-- Write query here:
+
+
+-- Q1.2: How many users generate 0 revenue?
+
+-- Write query here:
+
+
+-- Q1.3: What % of revenue comes from top 10% users?
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 2 — Where does revenue actually come from?
+========================================================= */
+
+-- Q2.1: Revenue per funnel step
+
+-- Write query here:
+
+
+-- Q2.2: First funnel step where paying users appear
+
+-- Write query here:
+
+
+-- Q2.3: Do users generate revenue before final step?
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 3 — Are converters actually high value?
+========================================================= */
+
+-- Q3.1: Split users into converters vs non-converters
+
+-- Write query here:
+
+
+-- Q3.2: Avg revenue per converter vs non-converter
+
+-- Write query here:
+
+
+-- Q3.3: Revenue distribution within converters
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 4 — Value leakage in the funnel
+========================================================= */
+
+-- Q4.1: Revenue before vs after each funnel step
+
+-- Write query here:
+
+
+-- Q4.2: Revenue lost at each step
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 5 — High-value users behavior
+========================================================= */
+
+-- Q5.1: Segment users (high / mid / low value)
+
+-- Write query here:
+
+
+-- Q5.2: Funnel completion rate per segment
+
+-- Write query here:
+
+
+-- Q5.3: Drop-off points per segment
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 6 — Conversion vs Revenue alignment
+========================================================= */
+
+-- Q6.1: Conversion rate per funnel step
+
+-- Write query here:
+
+
+-- Q6.2: Revenue per funnel step
+
+-- Write query here:
+
+
+-- Q6.3: Compare conversion vs revenue impact
+
+-- Write query here:
+
+
+
+/* =========================================================
+STEP 7 — Prioritization (PM thinking)
+========================================================= */
+
+-- Q7.1: Rank funnel steps by revenue loss
+
+-- Write query here:
+
+
+-- Q7.2: Identify highest-impact step to fix
+
+-- Write query here:
+
+
+
+/* =========================================================
+FOUNDATION TABLES (START HERE)
+========================================================= */
+
+-- Build user revenue table
+
+-- Write query here:
+
+
+-- Join revenue with funnel data
+
+-- Write query here:
+
+
+-- Core cuts:
+-- 1. Revenue per step
+-- 2. Revenue per segment
+-- 3. Revenue distribution
+
+-- Write queries here:
