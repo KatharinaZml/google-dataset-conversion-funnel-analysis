@@ -1,0 +1,201 @@
+=====================================================
+SECTION 1: DATA EXPLORATION
+=====================================================
+-- 1a) Session-level understanding (a detail understanding)
+SELECT
+  fullVisitorId,
+  visitNumber,
+  TIMESTAMP_SECONDS(visitStartTime) AS session_time,
+  hits.hitNumber
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`,
+UNNEST(hits) AS hits
+WHERE fullVisitorId = '3781665366618090508';
+
+-- 1b) Returning user with multi-session behaviour
+-- Hits per session
+SELECT
+  fullVisitorId,
+  visitNumber,
+  COUNT(hits.hitNumber) AS hits_per_session
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`,
+UNNEST(hits) AS hits
+WHERE fullVisitorId = '3781665366618090508'
+GROUP BY fullVisitorId, visitNumber
+ORDER BY visitNumber;
+
+-- 1c) Session duration (engagement proxy)
+SELECT
+  fullVisitorId,
+  visitNumber,
+  totals.timeOnSite AS session_duration_seconds
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+WHERE fullVisitorId = '3781665366618090508'
+ORDER BY session_duration_seconds DESC;
+
+=====================================================
+SECTION 2: CONVERSION DEFINITION
+=====================================================
+-- 2a) Conversion rate baseline
+SELECT 
+  COUNTIF(totals.transactionRevenue IS NULL) AS non_conversions,
+  COUNTIF(totals.transactionRevenue IS NOT NULL) AS conversions,
+  SAFE_DIVIDE(COUNTIF(totals.transactionRevenue IS NOT NULL), COUNT(*)) * 100 AS conversion_rate_pct
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`;
+
+-- ~1.27% conversion rate ->  highly imbalanced funnel
+-- 2b) Engagement difference: converters vs non-converters
+SELECT
+  CASE 
+    WHEN totals.transactionRevenue IS NOT NULL THEN 'converter'
+    ELSE 'non_converter'
+  END AS session_type,
+  AVG(totals.hits) AS avg_hits
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+GROUP BY session_type;
+
+-- Converters show ~8.6x more interactions
+
+=====================================================
+SECTION 3: FUNNEL ANALYSIS (on an event-level)
+=====================================================
+WITH events AS (
+  SELECT
+    CASE hits.eCommerceAction.action_type
+      WHEN '2' THEN 'product_view'
+      WHEN '3' THEN 'add_to_cart'
+      WHEN '5' THEN 'checkout'
+      WHEN '6' THEN 'purchase'
+    END AS stage
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`,
+  UNNEST(hits) AS hits
+)
+
+SELECT
+  stage,
+  COUNT(*) AS events,
+  SAFE_DIVIDE(COUNT(*), SUM(COUNT(*)) OVER()) * 100 AS pct
+FROM events
+GROUP BY stage
+ORDER BY events DESC;
+
+Key Insight:
+Most activity is browsing (non-ecommerce)
+Largest drop-off happens between the pages: "product -> add to cart"
+
+=====================================================
+SECTION 4: USER-LEVEL FUNNEL
+=====================================================
+WITH events AS (
+  SELECT
+    fullVisitorId,
+    CASE hits.eCommerceAction.action_type
+      WHEN '2' THEN 'product_view'
+      WHEN '3' THEN 'add_to_cart'
+      WHEN '5' THEN 'checkout'
+      WHEN '6' THEN 'purchase'
+    END AS stage
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`,
+  UNNEST(hits) AS hits
+  WHERE hits.eCommerceAction.action_type IN ('2','3','5','6')
+)
+
+SELECT
+  stage,
+  COUNT(DISTINCT fullVisitorId) AS users
+FROM events
+GROUP BY stage
+ORDER BY users DESC;
+=====================================================
+SECTION 5: PRODUCT ANALYSIS
+=====================================================
+WITH product_data AS (
+  SELECT
+    product.v2ProductCategory AS category,
+    totals.transactionRevenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`,
+  UNNEST(hits) AS hits,
+  UNNEST(hits.product) AS product
+)
+
+SELECT
+  category,
+  COUNT(*) AS interactions,
+  COUNTIF(transactionRevenue IS NOT NULL) AS conversions,
+  SAFE_DIVIDE(COUNTIF(transactionRevenue IS NOT NULL), COUNT(*)) * 100 AS conversion_rate
+FROM product_data
+GROUP BY category
+ORDER BY conversion_rate DESC;
+
+Key insight:
+- Apparel / Office / Drinkware = high-intent categories
+- Many categories are browsing-heavy -> indicate a weak purchase intent
+
+=====================================================
+SECTION 6: ENGAGEMENT
+=====================================================
+-- Bounce rate
+SELECT
+  CASE 
+    WHEN totals.transactionRevenue IS NOT NULL THEN 'converter'
+    ELSE 'non_converter'
+  END AS session_type,
+  COUNT(*) AS sessions,
+  COUNTIF(totals.pageviews = 1) AS bounces,
+  SAFE_DIVIDE(COUNTIF(totals.pageviews = 1), COUNT(*)) * 100 AS bounce_rate
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+GROUP BY session_type;
+
+=====================================================
+SECTION 7: REPEAT BEHAVIOUR
+=====================================================
+SELECT
+  CASE 
+    WHEN totals.transactionRevenue IS NOT NULL THEN 'converter'
+    ELSE 'non_converter'
+  END AS user_type,
+  AVG(visitNumber) AS avg_visits
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+GROUP BY user_type;
+
+=====================================================
+SECTION 8: FUNNEL DEEP DIVE
+=====================================================
+WITH user_groups AS (
+  SELECT 
+    fullVisitorId,
+    CASE 
+      WHEN SUM(totals.transactionRevenue) > 0 THEN 'converter'
+      ELSE 'non_converter'
+    END AS user_type
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+  GROUP BY fullVisitorId
+),
+
+funnel_sessions AS (
+  SELECT
+    fullVisitorId,
+    visitId,
+    MAX(CASE WHEN hits.page.pagePath LIKE '%product%' THEN 1 ELSE 0 END) AS viewed_product,
+    MAX(CASE WHEN hits.page.pagePath LIKE '%cart%' THEN 1 ELSE 0 END) AS added_to_cart,
+    MAX(CASE WHEN hits.page.pagePath LIKE '%checkout%' THEN 1 ELSE 0 END) AS reached_checkout,
+    MAX(CASE WHEN totals.transactionRevenue IS NOT NULL THEN 1 ELSE 0 END) AS purchased
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`,
+  UNNEST(hits) AS hits
+  GROUP BY fullVisitorId, visitId
+),
+
+combined AS (
+  SELECT u.user_type, f.*
+  FROM user_groups u
+  JOIN funnel_sessions f
+  USING (fullVisitorId)
+)
+
+SELECT
+  user_type,
+  AVG(viewed_product) AS product_rate,
+  AVG(added_to_cart) AS cart_rate,
+  AVG(reached_checkout) AS checkout_rate,
+  AVG(purchased) AS purchase_rate
+FROM combined
+GROUP BY user_type;
