@@ -1,0 +1,242 @@
+Data insights & recommendations
+
+==============================
+1. Context
+==============================
+This analysis is based on the Google Analytics Sample dataset (BigQuery public dataset).
+Please find the dataset here:
+https://console.cloud.google.com/marketplace/product/google/analytics-sample
+
+Please note:
+This is a synthetic, sample dataset.
+
+Specifically:
+1. We are not familiar with real business constraints (e.g. UX, budget, tech stack, marketing strategy, etc.)
+2. We cannot validate causality (only correlation)
+3. Funnel interpretation is based on event + session-level proxies
+
+More specifically, I treat the findings as directional rather than absolute. The recommendations focus on relative funnel friction points, rather behavioural differences rather than business-specific constraints.
+
+==============================
+2. Insights
+==============================
+1. The largest drop-off occurs between the stages: product -> add-to-cart (3.1.)
+2. Users show product engagement, however, often do not take the next action (3.1.)
+3. A significant share of users who view products do not proceed to cart (3.2.)
+4. Certain categories (e.g. Apparel, Office, Drinkware) show higher association with conversion sessions (3.3.)
+5. Once users reach checkout, conversion rates improve significantly compared to earlier funnel stages (3.4.)
+6. Converters show significantly higher engagement (more hits, longer sessions, more pageviews) (3.5)
+
+
+==========================================
+3. Assumptions & business recommendations:
+==========================================
+3.1. Assumptions:
+
+- “Product view” is an intent signal
+- Missing add-to-cart is a friction or lack of persuasion (non-supply issues)
+
+-> Recommendation: Focus on improving product page effectiveness:
+
+- Improve clarity of product information (eg images, pricing, descriptions)
+- Strengthen trust signals (e.g. reviews, ratings, delivery info)
+- Make CTAs (call-to-action) more visible and action-oriented (“e.g. Add to Cart” prominence)
+- Reduce cognitive load (simplify page layout, avoid distractions)
+
+==============================
+3.2.  Data insights
+==============================
+Assumptions:
+
+- Users are still undecided rather than intentionally abandoning purchase
+- Technical tracking of add-to-cart events is complete and reliable
+- Page paths are complete and accurately tracked
+
+-> Recommendation: Reduce Friction in Add-to-Cart step and optimise interaction flow between interest and action:
+
+- Introduce “quick add to cart” options
+- Reduce number of clicks required to add items
+- Improve mobile UX (especially CTA placement and responsiveness)
+- Test frictionless cart interactions (side cart or modal cart)
+
+============================================
+3.3. Prioritise high-intent product categories
+
+Assumptions:
+- Category-level performance reflects demand quality, not just traffic distribution
+- No major seasonality bias in sample data
+
+Recommendation
+- Prioritise these categories in marketing campaigns
+- Personalise recommendations around high-performing categories
+- Optimise landing pages for high-intent categories
+- Allocate more visibility on homepage / navigation
+
+
+============================================
+3.4. Checkout is not the primary bottleneck
+
+
+Recommendation
+- Do not prioritise checkout optimisation as the first step
+- Maintain checkout simplicity (avoid over-engineering)
+- Focus resources upstream in the funnel (product discovery & cart entry)
+
+Assumptions:
+
+- Checkout data is correctly tracked in the dataset
+- No external issues (e.g. payment failures, shipping constraints) affecting conversion
+
+============================================
+3.5. Segment users by engagement intensity
+
+Assumptions:
+
+- Engagement metrics are valid proxies for intent
+- Users behave consistently across sessions (no cross-device bias in sample)
+
+Recommendation
+- Build remarketing audiences based on engagement signals:
+- High product page views
+- Repeated sessions
+- Cart interactions without purchase
+- Target high-intent non-converters with personalised ads or email flows
+- Prioritise behavioural segmentation over demographic segmentation
+
+============================================
+4. Summary insights
+============================================
+
+4.1. Conversion is primarily lost early in the funnel at the product-to-cart stage. This suggests that optimisation should focus on improving product page effectiveness and reducing friction before add-to-cart, rather than prioritising checkout optimisation.
+
+===============================
+5. Limitations of the analysis
+===============================
+
+There is no visibility into:
+- UX design decisions
+- Inventory / pricing strategy
+- Technical errors or checkout failures
+- Conversion was inferred from transactionRevenue, which may not capture full revenue logic
+- Funnel steps are approximations based on event tracking. They may not capture the full user journey
+- Causality was not established (only potential correlation patterns)
+
+===========================================================
+6. Recommendations for future research e.g. Analytics teams
+===========================================================
+
+6.1. Identify why users drop off at the product page
+The current analysis shows a major drop-off at product -> add-to-cart, but not the cause.
+
+6.1.1. What to investigate next:
+- Do specific product attributes influence drop-off?
+- What is the price level?
+- category type, e.g. number of images / content richness (if available)
+
+6.1.2. Are users leaving due to:
+- lack of information?
+- Comparison behaviour?
+- a weak purchase intent?
+
+6.1.3. Method ideas:
+- Product-level regression: conversion ~ price + category + engagement
+- A/B testing hypotheses (UX changes on product page)
+
+6.2. Separate “intent-driven” vs “exploratory” browsing behaviour
+
+In this analysis, all product views were treated equally.
+
+6.2.1. What to investigate next:
+
+Can we classify sessions into:
+- high intent (multiple product views, cart activity)
+- low intent (single page view, bounce)
+-  Do converters behave differently before entering the funnel?
+
+6.2.2. Method ideas:
+cluster sessions based on:
+- hits per session
+- time on site
+- product views
+- sequence analysis of early user behaviour
+
+6.3. Understand user journey paths more deeply (e.g.  a sequence analysis)
+
+Current funnel is asummed linear, but "real behaviour" is not.
+
+6.3.1. What to investigate next:
+- Common navigation paths before conversion:
+- Product ->  product -> cart
+- Category -> product -> product -> checkout
+
+6.3.2. Looping behaviour:
+- Do users compare multiple products before deciding?
+
+6.3.3. Method ideas:
+- Frequent paths
+
+4. Evaluate category performance in a more controlled way
+
+- Category analysis is currently descriptive and may be biased by traffic volume.
+
+6.4.1. What to investigate next:
+- Are high-performing categories actually better or just more visible?
+Normalise by:
+- impressions
+- session type
+- user intent level
+
+Specifically, normalising refers to adjusting the metric so it accounts for how often something was shown, not just how often users interacted with it. 
+For example, we investigate : "How many conversions does this category get per opportunity to be seen?" (Impressions) Rather than the descriptive approach: "How many conversions does this category have?"
+6.4.2. Method ideas:
+ - uplift modelling by category
+- conversion probability models controlling for engagement
+
+6.5. Improve segmentation of “converter vs non-converter”
+
+Current definition is binary (transaction: yes (1) /no (0)) -> which is limited.
+
+6.5.1. What to investigate next:
+
+- product views
+- add-to-cart events
+- checkout initiation
+
+6.5.2. Time-to-conversion:
+- how many sessions until purchase?
+
+6.5.3. Repeat exposure effect:
+- does repeated exposure increase conversion probability?
+
+6.5.4. Method ideas:
+- time to conversion analysis
+- funnel cohort analysis
+
+6.6. Validate the assumption whether checkout is truly “not a problem” as discussed above.
+
+Current insight suggests checkout is not the main bottleneck, but this may be misleading.
+
+6.6.2. What to investigate next:
+- Drop-off within checkout steps (if available)
+- Payment / technical failure rates (not visible in dataset)
+- Device-specific checkout performance
+
+Risk here might be:
+Checkout issues may be hidden due to dataset limitations
+
+7. Introduce causal analysis instead of descriptive insights
+
+Current findings are correlation-based.
+
+7.1. What to investigate next:
+- What actually causes conversion lift? (
+- Do certain behaviours increase probability of purchase?
+
+7.2. Method ideas:
+- A/B testing framework simulation
+- causal inference (propensity score matching, e.g. using the observational data here: high-engagement users convert more ->  BUT: They may already have higher intent, controlling for the bias)
+
+
+Future work should focus on moving from descriptive funnel analysis to causal and behavioural modelling. 
+Specifically, understanding why users drop off at the product page and segmenting users by intent and navigation behaviour would help identify actionable UX or marketing interventions.
+
