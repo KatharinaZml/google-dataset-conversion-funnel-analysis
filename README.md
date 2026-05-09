@@ -22,13 +22,15 @@ The dataset covers the period: 2016-08-01 to 2017-08-01
 
 2.3. Project implication
 
-All insights, including user behaviour, revenue distribution and conversion patterns, are derived exclusively from:
-- sessions that occurred within this 1-year historical timeframe
+All insights — including:
 
--> This means the analysis reflects historical user behaviour patterns only, not current platform activity.
+- user behaviour,
+- revenue distribution,
+- retention,
+- and conversion patterns
+are derived exclusively from sessions that occurred within this historical 1-year timeframe. This means the analysis reflects historical user behaviour patterns only, not current platform activity.
 
-
-Specifically, the dataset should be interpreted as a static, time-bound snapshot of user interactions (Aug 2016 to Aug 2017), used for analytical and learning purposes rather than real-time decision-making.
+Consequently, the dataset should therefore be interpreted as: a static, time-bound snapshot of ecommerce user interactions (Aug 2016 - Aug 2017), used for analytical and learning purposes rather than real-time business decision-making.
 
 3. Tables used:
 
@@ -36,11 +38,38 @@ bigquery-public-data.google_analytics_sample.ga_sessions_*
 
 There is no setup required. It is publicly available inside BigQuery.
 
-4. Project goal
+The objective of this project was to identify:
 
-Identification of:
-3.1. Where users drop-off in the funnel
+3.1. Where users drop off in the funnel
+Session → product interaction
+Product → cart
+Cart → purchase
+
 3.2. How converters differ from non-converters
-3.3. Which behaviours and product categories drive conversion
 
+Using:
+- behavioral engagement,
+- session depth,
+- pageviews,
+- hits,
+- and purchase behavior.
 
+3.3. Which behaviours drive conversion
+
+Including:
+- add-to-cart activity,
+- funnel progression,
+- engagement intensity,
+- and repeat interaction patterns.
+
+4. Project Overview
+
+This project analyses user behaviour, retention, conversion dynamics and revenue concentration using the Google Analytics sample e-commerce dataset in BigQuery.
+
+The objective was not only to describe user activity, but to understand:
+- where users drop in the funnel,
+- which users generate business value,
+- how revenue is structurally distributed,
+- and which funnel stages represent the highest business impact.
+
+The analysis progresses from descriptive analytics toward business prioritisation and strategic decision-making.
