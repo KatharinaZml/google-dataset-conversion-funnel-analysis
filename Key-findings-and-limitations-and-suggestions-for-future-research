@@ -1,0 +1,282 @@
+* **Analytical Workflow**
+
+* **1. User Lifecycle & Retention Analysis**
+
+  * Built user cohorts and retention windows to evaluate long-term engagement.
+
+* **Key Findings**
+
+  * No users remained active across all 13 months.
+  * ~5% returned within 7 days.
+  * Retention plateaued at roughly ~9% after ~90 days.
+  * Most users either:
+
+    * converted quickly,
+    * or churned almost immediately.
+
+* **Business interpretation**
+
+  * The platform behaves less like an engagement-driven product and more like an intent-driven ecommerce system, where value is generated shortly after acquisition.
+
+---
+
+* **2. Revenue distribution analysis**
+
+* Analysed revenue at:
+
+  * user level,
+  * session level,
+  * and percentile distribution level.
+
+* **Key Findings**
+
+  * ~98–99% of users/sessions generated no revenue.
+  * Revenue followed an extreme power-law distribution.
+  * Median revenue = 0.
+  * The top ~1% of users generated nearly all revenue.
+
+* **Business Interpretation**
+
+  * The “average user” is not economically meaningful.
+  * Business performance depends disproportionately on a very small group of high-intent users.
+
+---
+
+* **3. Traffic source analysis**
+
+* Analysed revenue contribution by acquisition channel.
+
+* **Key findings**
+
+  * ~77% of revenue came from direct traffic.
+  * Google was the primary acquisition engine.
+  * Paid/referral channels contributed minimally.
+
+* **Business interpretation**
+
+  * The business appears highly dependent on:
+
+    * returning users,
+    * brand-driven behaviour,
+    * and potentially incomplete attribution tracking.
+  * This suggests both:
+
+    * strong retention/brand familiarity,
+    * and channel concentration risk.
+
+---
+
+* **4. Behavioural segmentation**
+
+* Users were segmented into:
+
+  * converters,
+  * high-intent non-converters,
+  * low-intent non-converters.
+
+* Behavioural proxies included:
+
+  * add-to-cart activity,
+  * hits,
+  * pageviews,
+  * and session depth.
+
+* **Key findings**
+
+  * High-intent non-converters showed:
+
+    * deep engagement,
+    * strong purchase signals,
+    * but failed to complete conversion.
+
+* **Business interpretation**
+
+  * These users represent the highest unrealised revenue opportunity.
+
+---
+
+* **5. Funnel leakage & revenue impact analysis**
+
+* Constructed a session-level funnel:
+
+  * session_start → product_view → add_to_cart → purchase
+
+* Measured:
+
+  * progression,
+  * drop-offs,
+  * revenue exposure,
+  * and leakage between funnel stages.
+
+* **Funnel results**
+
+  * Session → product
+
+    * ~86% drop rate
+    * Massive early disengagement
+  * Product → cart
+
+    * ~64% drop rate
+    * Moderate intent leakage
+  * Cart → purchase
+
+    * ~80% drop rate
+    * Severe checkout abandonment
+
+---
+
+* **Final business synthesis**
+
+  * The product operates as a highly skewed, intent-driven ecommerce system where:
+
+    * a very small fraction of users generates nearly all revenue,
+    * most users churn early,
+    * conversions occur quickly after acquisition,
+    * and revenue depends heavily on efficiently converting high-intent users.
+  * The highest business leverage likely lies in:
+
+    * reducing cart abandonment,
+    * improving early funnel qualification,
+    * and identifying high-intent users earlier in the journey.
+
+---
+
+* **Strategic recommendations**
+
+* **1. Prioritise High-Intent Users**
+
+  * Focus on:
+
+    * cart abandoners,
+    * deep product explorers,
+    * repeat visitors,
+    * and users with strong engagement signals.
+  * Potential actions:
+
+    * retargeting,
+    * personalised offers,
+    * checkout reminders,
+    * and CRM workflows.
+
+* **2. Improve funnel efficiency**
+
+  * The largest business impact likely comes from:
+
+    * improving cart → purchase conversion,
+    * reducing checkout friction,
+    * and simplifying conversion flows.
+
+* **3. Diversify acquisition channels**
+
+  * Heavy reliance on “direct” traffic introduces concentration risk.
+  * Potential actions:
+
+    * improve attribution tracking,
+    * diversify paid acquisition,
+    * and expand SEO/social strategies.
+
+* **4. Move towards predictive analytics**
+
+  * Future iterations could include:
+
+    * conversion prediction models,
+    * intent scoring,
+    * LTV prediction,
+    * behavioural clustering,
+    * and churn probability models.
+
+---
+
+* **Technical skills demonstrated**
+
+  * SQL (BigQuery)
+  * Funnel analysis
+  * Retention analysis
+  * Behavioural segmentation
+  * Revenue distribution analysis
+  * Window functions
+  * CTE pipelines
+  * Ecommerce analytics
+  * Business interpretation
+  * Product analytics thinking
+
+---
+
+* **Limitations + future research**
+
+* **Limitations of using average revenue**
+
+  * Average revenue is highly misleading in this dataset because revenue distribution is extremely skewed.
+  * A very small number of high-value users disproportionately inflate the mean, while the median user generates no revenue at all.
+  * As a result:
+
+    * averages do not represent typical user behaviour,
+    * comparisons based on mean values may overestimate user value,
+    * and business decisions based solely on averages could misallocate optimisation efforts.
+  * More robust alternatives include:
+
+    * medians,
+    * percentile analysis,
+    * segment-specific expected value,
+    * or conditional revenue models.
+
+---
+
+* **Additional limitations**
+
+* **1. No product-level table**
+
+  * The dataset does not contain a dedicated product catalogue or detailed product attributes.
+  * This limits:
+
+    * product-level conversion analysis,
+    * category-level optimisation,
+    * pricing analysis,
+    * and recommendation-system insights.
+
+* **2. Revenue stored in micro-Units**
+
+  * Google Analytics stores revenue in micro-units, requiring normalisation for real-world interpretation.
+
+* **3. Intent is inferred indirectly**
+
+  * High-intent behaviour was approximated using:
+
+    * add-to-cart events,
+    * page depth,
+    * and interaction counts.
+  * This is a proxy and may not perfectly reflect true purchase intent.
+
+* **4. No customer-level demographics or CRM data**
+
+  * The dataset lacks:
+
+    * demographics,
+    * customer history,
+    * marketing spend,
+    * and lifecycle information.
+  * This restricts:
+
+    * causal analysis,
+    * attribution quality,
+    * and long-term customer value modelling.
+
+---
+
+* **Future research directions**
+
+  * Future work could extend this analysis using:
+
+    * predictive conversion modelling,
+    * churn prediction,
+    * customer lifetime value (LTV) estimation,
+    * clustering methods (e.g. K-Means),
+    * sequence/path analysis,
+    * uplift modelling,
+    * and causal experimentation (A/B testing).
+  * If richer product or CRM data were available, future analysis could also investigate:
+
+    * product affinity,
+    * category-level conversion behaviour,
+    * pricing sensitivity,
+    * and personalisation effectiveness.
